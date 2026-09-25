@@ -41,12 +41,14 @@ export function AdminTicketDetail() {
 
   useEffect(() => { void load() }, [id])
 
-  async function assign() {
-    setSaving(true); setError("")
-    const { error: updateError } = await supabase.from("tickets").update({ assigned_to: selected || null }).eq("id", id)
-    if (updateError) setError(updateError.message); else await load()
-    setSaving(false)
-  }
+async function assign() {
+  setSaving(true); setError("")
+  const { error: updateError } = await supabase.from("tickets")
+    .update({ assigned_to: selected || null, status: selected ? "in_progress" : "open" })
+    .eq("id", id)
+  if (updateError) setError(updateError.message); else await load()
+  setSaving(false)
+}
 
   async function changeStatus(value: string) {
     const { error: updateError } = await supabase.from("tickets").update({ status: value }).eq("id", id)
